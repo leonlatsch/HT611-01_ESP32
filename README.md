@@ -2,6 +2,7 @@
 ESP32 based pcb for controlling a Siedle HT611-01 Intercom
 
 ![pdb_assembled](images/pcb_assembled_rev1.1.jpg)
+![pdb_layout](pcb/rev_1.1/pcb_layout_1.1.png)
 
 This is a project I did with the my fellow [T3chGuyz](https://github.com/T3chguys).
 Its a pcb (printed circut board) that controls an existing intercom device installed in a multi family home. Similar to the [Nuki Opener](https://nuki.io/de/opener/). Can also be used for other devices meeting [some requirements](TODO).
@@ -11,7 +12,6 @@ Its a pcb (printed circut board) that controls an existing intercom device insta
 - A sensor for the doorbell
 - Mute the doorbell
 - Ring to open
-
 
 # Getting Started
 
