@@ -1,0 +1,128 @@
+esphome:
+  name: intercom-pcb-rev11
+  friendly_name: Klingelsystem
+
+esp32:
+  board: esp32-s2-saola-1
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+   key: "REMOVE AND USE YOUR KEY"
+
+ota:
+  password: "REMOVE AND USE YOUR PASSWORD"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Intercom-Pcb-Rev11"
+    password: "REMOVE AND USE YOUR PASSWORD"
+
+captive_portal:
+
+sensor:
+  - platform: uptime
+    name: Uptime Sensor
+    update_interval: 1min
+
+web_server:
+  port: 80
+  local: true
+
+binary_sensor:
+  - platform: gpio
+    name: Doorbell
+    icon: "mdi:bell"
+    pin:
+      number: 12
+      inverted: true
+      mode:
+        input: true
+        pullup: true
+    filters:
+      - delayed_on: 10ms
+      - delayed_off: 10ms
+    on_press:
+      then:
+        - if: 
+            condition:
+              switch.is_on: ring_to_open_switch
+            then:
+              - delay: 1s
+              - button.press: open_door_button
+              - switch.turn_off: ring_to_open_switch
+            else:
+              - mqtt.publish:
+                  topic: "homebridge/doorbell"
+                  payload: "L" 
+
+
+switch:
+  # Relay 1 - Door Opener
+  - platform: gpio
+    id: door_opener_switch
+    internal: true
+    pin:
+      number: 10
+      
+  # Relay 2 - Doorbell Mute
+  - platform: gpio
+    id: doorbell_mute_switch
+    name: Mute Doorbell
+    icon: "mdi:bell-cancel"
+    pin:
+      number: 11
+      inverted: false
+
+  # Template - Ring to Open Mode
+  - platform: template
+    name: Ring to open
+    id: ring_to_open_switch
+    icon: "mdi:bell-ring"
+    optimistic: true
+    on_turn_on:
+      then:
+        if:
+          condition:
+            switch.is_off: doorbell_mute_switch
+          then:
+            - switch.turn_on: doorbell_mute_switch
+            - delay: 10min
+            - switch.turn_off: doorbell_mute_switch
+            - switch.turn_off: ring_to_open_switch
+          else:
+            - delay: 10min
+            - switch.turn_off: ring_to_open_switch
+
+button:
+
+  # Open Door
+  - platform: template
+    name: Open DOor
+    icon: "mdi:door-open"
+    id: open_door_button
+    on_press:
+      - switch.turn_on: door_opener_switch
+      - delay: 2s
+      - switch.turn_off: door_opener_switch
+  
+  # Restart
+  - platform: restart
+    name: Restart
+
+mqtt:
+  broker: # Use your mqtt if needed
+  username: !secret mqtt_username
+  password: !secret mqtt_password
+  client_id: klingelsystem-pcb-rev1.1
+  discovery: false
+    
