@@ -1,4 +1,5 @@
-# ESP32 based pcb for controlling a Siedle HT611-01 Intercom
+# EPS32 Smart Intercom Extension
+ESP32 based pcb for controlling a Siedle HT611-01 Intercom
 
 ![pdb_assembled](images/pcb_assembled_rev1.1.jpg)
 
@@ -109,4 +110,14 @@ The functionality is pretty simple. Mostly relais.
 - The doorbell sensor uses an [optocouppler](https://en.wikipedia.org/wiki/Opto-isolator) to get a notice of the AC signal from the intercom
 - The rest is standard stuff for a esp32. The boot and en button, voltage regulation, etc. is pretty similar to a ESP32 dev board
 
-Everything connected to the intercom is a separate circut, meaning no direct connection from the ESP32 to the intercom itself. 
+Everything connected to the intercom is a separate circut, meaning no direct connection from the ESP32 to the intercom itself.
+
+# Hardware requirements
+
+If you want to install this in another intercom, make sure to meet these requirements:
+
+- door opener circut co connect to
+- Ring circut to connect to
+- MAX 2A on the Ring circut (requirement by trace width)
+- MAX voltage for opening and bell muting is 250V since I used overdimensionized relays. May change in a later revision.
+- The circut for reading the bell signal is made to read a 12V AC signal. May work with DC, havn't tested
